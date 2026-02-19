@@ -1,6 +1,8 @@
 # Graph-theoretic analysis of Neural Networks
 
 ## Stack
+![Prefect](https://img.shields.io/badge/-Prefect-darkgreen?logo=Prefect&style=for-the-badge&color=070E10)
+
 ![NetworkX](https://img.shields.io/badge/-NetworkX-darkgreen?logo=NetworkX&style=for-the-badge)
 ![nVIDIA](https://img.shields.io/badge/nx--cugraph-000000.svg?style=for-the-badge&logo=nVIDIA&logoColor=green)
 ![Keras](https://img.shields.io/badge/-Keras-D00000?logo=keras&style=for-the-badge)
