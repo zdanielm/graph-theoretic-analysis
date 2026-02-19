@@ -1,0 +1,9 @@
+keras
+prefect
+pandas
+numpy
+pyyaml
+tensorflow-model-optimization
+networkx
+matplotlib
+onnx
