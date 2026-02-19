@@ -237,11 +237,11 @@ if __name__ == "__main__":
     print("\n=== GRAPH2VEC Training ===")
     embeddings = graph2vec(
         graphs=graphs,
-        D=2,          # Max WL depth
-        delta=384,     # Embedding dimension
-        epochs=40,    # Training epochs
-        alpha=0.025,  # Learning rate
-        seed=42
+        D=2,          # max WL depth
+        delta=384,     # embedding dimension
+        epochs=40,    # training epochs
+        alpha=0.025,  # learning rate
+        seed=42       # random seed for reproducibility
     )
 
     print("\n=== Learned Embeddings ===")

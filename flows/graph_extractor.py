@@ -9,6 +9,7 @@ import pandas as pd
 import yaml
 from blocks.quant_layers import BinaryDense, TernaryDense
 from blocks.pruner import ModelPruner
+from blocks.graph_extraction import keras_to_digraph
 
 
 LOGGER = get_run_logger()
@@ -151,5 +152,7 @@ def prune_model(model, config, X_train, y_train, X_val, y_val):
 
 
 @flow(name="Graph Extractor")
-def graph_extractor():
-    pass
+def graph_extractor(export_path):
+    LOGGER.info(f"Starting graph extractor flow and saving to {export_path}")
+
+    _ = keras_to_digraph()
