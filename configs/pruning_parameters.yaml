@@ -1,0 +1,4 @@
+initial_sparsity: 0.30
+final_sparsity: 0.70
+begin_step: 1000
+end_step: 3000

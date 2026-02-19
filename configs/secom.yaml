@@ -1,0 +1,64 @@
+models:
+  full:
+    name: "SECOMFullPrecisionModel"
+    layers:
+      - type: "Dense"
+        units: 64
+        activation: "gelu"
+      - type: "BatchNormalization"
+      - type: "Dropout"
+        rate: 0.3
+      - type: "Dense"
+        units: 32
+        activation: "gelu"
+      - type: "BatchNormalization"
+      - type: "Dropout"
+        rate: 0.3
+      - type: "Dense"
+        units: 1
+        activation: "sigmoid"
+
+  binary:
+    name: "SECOMBinaryModel"
+    layers:
+      - type: "BinaryDense"
+        units: 64
+        activation: "relu"
+      - type: "BatchNormalization"
+      - type: "Dropout"
+        rate: 0.3
+      - type: "BinaryDense"
+        units: 32
+        activation: "relu"
+      - type: "BatchNormalization"
+      - type: "Dropout"
+        rate: 0.3
+      - type: "BinaryDense"
+        units: 1
+        activation: "sigmoid"
+
+  ternary:
+    name: "SECOMTernaryModel"
+    layers:
+      - type: "TernaryDense"
+        units: 64
+        activation: "relu"
+      - type: "BatchNormalization"
+      - type: "Dropout"
+        rate: 0.3
+      - type: "TernaryDense"
+        units: 32
+        activation: "relu"
+      - type: "BatchNormalization"
+      - type: "Dropout"
+        rate: 0.3
+      - type: "TernaryDense"
+        units: 1
+        activation: "sigmoid"
+
+training:
+  optimizer: "adam"
+  loss: "binary_crossentropy"
+  metrics: ["accuracy", "Recall", "Precision"]
+  batch_size: 32
+  epochs: 50
