@@ -2,6 +2,35 @@ import tensorflow as tf
 import networkx as nx
 import numpy as np
 
+
+def graph_to_cytoscape(G, output_path):
+    """
+    Export a NetworkX graph to CytoScape edgelist and attributes CSVs.
+    
+    Args:
+        G: NetworkX graph (DiGraph, Graph, etc.)
+        output_path: Base path for output files (e.g. 'epoch_100' -> epoch_100_edgelist.csv, epoch_100_attributes.csv)
+    
+    Returns:
+        output_path (for convenience)
+    """
+    base = str(output_path).rstrip("_")
+    
+    # Edgelist: source, target, weight
+    edges = [(u, v, d.get("weight", 1)) for u, v, d in G.edges(data=True)]
+    edgelist_df = pd.DataFrame(edges, columns=["source", "target", "weight"])
+    edgelist_df.to_csv(f"{base}_edgelist.csv", index=False)
+    
+    rows = []
+    for node_id, attrs in G.nodes(data=True):
+        row = {"node": node_id, **attrs}
+        rows.append(row)
+    attr_df = pd.DataFrame(rows)
+    attr_df.to_csv(f"{base}_attributes.csv", index=False)
+    
+    print(f"{base}: {len(G.nodes)} nodes, {len(G.edges)} edges -> {base}_edgelist.csv, {base}_attributes.csv")
+    return base
+
 def keras_to_digraph(model_path, output_path='network.gexf'):
     """
     Extract a directed graph from a Keras model where:
@@ -109,6 +138,7 @@ def keras_to_digraph(model_path, output_path='network.gexf'):
             prev_layer_size = len(layer_node_map[layer_idx])
 
     nx.write_gexf(G, output_path)
+    graph_to_cytoscape(G, output_path)
 
     print(f"output path: {output_path}")
     print(f"num of nodes: {G.number_of_nodes()}")
