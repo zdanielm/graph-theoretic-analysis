@@ -1,3 +1,5 @@
+from typing import List
+
 import networkx as nx
 import numpy as np
 from scipy.stats import anderson, shapiro
@@ -94,7 +96,7 @@ def base_stats(samples):
         "std": float(np.std(samples, ddof=1)),
     }
 
-def distribution(samples, bins=100):
+def calculate_distribution(samples, bins=100):
     """
     Calculate the histogram of the given samples.
 
@@ -153,8 +155,8 @@ def cumulative_histogram(samples, bins=100):
 
     return {
         "upper_limit": edges[1:],
-        "count": cumulative_counts,
-        "probability": cumulative_prob
+        "c_count": cumulative_counts,
+        "c_probability": cumulative_prob
     }
 
 
@@ -180,3 +182,35 @@ def empirical_cdf(samples):
         "value": sorted_w,
         "cdf": np.arange(1, n+1) / n
     }
+
+
+def initialize_weight_matrix(graphs: List[nx.DiGraph]):
+    edges = sorted(graphs[0].edges())
+    num_edges = len(edges)
+    num_iters = len(graphs)
+
+    # Initialize a weight matrix: rows = edges, cols = iterations
+    weights = np.zeros((num_edges, num_iters))
+
+    # Fill matrix
+    for i, G in enumerate(graphs):
+        weights[:, i] = np.array([G[u][v].get('weight', 1.0) for u, v in edges])
+
+    return weights
+
+
+def temporal_change_analysis(weight_matrix, edges):
+    delta_weights = np.diff(weight_matrix, axis=1)  # shape: (num_edges, num_iters-1)
+
+    #rel_change = delta_weights / weight_matrix[:, :-1]
+
+    max_change_per_edge = np.max(np.abs(delta_weights), axis=1)
+    top_indices = np.argsort(max_change_per_edge)[-5:]  # top 5 most dynamic edges
+
+    top_edges = [edges[i] for i in top_indices]
+
+    return top_edges
+
+
+def analyze_changes():
+    pass

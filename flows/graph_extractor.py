@@ -1,21 +1,31 @@
-from prefect import flow, task, get_run_logger
-from prefect.tasks import task_input_hash
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, BatchNormalization
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.metrics import Recall, Precision
-from tensorflow.keras.callbacks import EarlyStopping
 import pandas as pd
 import yaml
-from blocks.quant_layers import BinaryDense, TernaryDense
-from blocks.pruner import ModelPruner
-from blocks.graph_extraction import keras_to_digraph
+from prefect import flow, get_run_logger, task
+from prefect.tasks import task_input_hash
+from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.layers import BatchNormalization, Dense, Dropout
+from tensorflow.keras.metrics import Precision, Recall
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.optimizers import Adam
 
+from blocks.graph_extraction import keras_to_digraph
+from blocks.pruner import ModelPruner
+from blocks.quant_layers import BinaryDense, TernaryDense
 
 LOGGER = get_run_logger()
 
 @task(name="Fetch Config")
 def fetch_config(config_file: str) -> dict:
+    """
+    Fetches a configuration dictionary from a YAML file.
+
+    Args:
+        config_file (str): Path to the YAML configuration file
+
+    Returns:
+        dict: The configuration dictionary
+    """
+
     LOGGER.info(f"Fetching config from {config_file}")
     with open(config_file, 'r') as f:
         config = yaml.safe_load(f)
@@ -24,6 +34,13 @@ def fetch_config(config_file: str) -> dict:
 
 @task(name="Data Split")
 def get_data_splits():
+    """
+    Creates two data splits from the input data, one for 10% and one for 50% of the data.
+
+    Returns:
+        tuple: A tuple containing two tuples, each containing the X_train, y_train, X_val and y_val for the respective data split.
+    """
+
     LOGGER.info(r"Creating 10 and 50% data splits")
     pass
 
