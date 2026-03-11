@@ -1,6 +1,6 @@
-import yaml
 import tensorflow as tf
 import tensorflow_model_optimization as tfmot
+import yaml
 
 
 class ModelPruner:

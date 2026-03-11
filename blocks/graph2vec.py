@@ -6,11 +6,13 @@ Graph2Vec algorithm implementation based on:
 Extracts a vector representation of a given NetworkX graph, so one can perform similarity search on it.
 """
 
+import random
+from collections import Counter, defaultdict
+from typing import Any, Dict, List, Tuple
+
 import networkx as nx
 import numpy as np
-from collections import defaultdict, Counter
-import random
-from typing import List, Dict, Tuple, Any
+
 
 def get_wl_subgraph(n: Any, G: nx.Graph, d: int, cache: Dict[Tuple[Any, int], str] = None) -> str:
     """

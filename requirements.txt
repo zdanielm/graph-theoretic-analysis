@@ -1,9 +1,10 @@
 keras
-prefect
-pandas
-numpy
-pyyaml
-tensorflow-model-optimization
-networkx
 matplotlib
+networkx
+numpy
 onnx
+pandas
+prefect
+pyyaml
+scipy
+tensorflow-model-optimization
