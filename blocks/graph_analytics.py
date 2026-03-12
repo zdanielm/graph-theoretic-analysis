@@ -54,15 +54,22 @@ def normality_test(graph: nx.DiGraph, attribute: str = "weight"):
         return {
             "test": "shapiro_wilk",
             "statistic": stat,
-            "p_value": p
+            "p_value": p,
+            "success": bool(p > 0.05)
         }
     else:
         result = anderson(samples, dist="norm")
+
+        sig_levels = np.asarray(result.significance_level)
+        crit_vals = np.asarray(result.critical_values)
+        idx_5pct = int(np.argmin(np.abs(sig_levels - 5.0)))
+        success = bool(result.statistic < crit_vals[idx_5pct])
         return {
             "test": "anderson_darling",
             "statistic": result.statistic,
             "critical_values": result.critical_values,
-            "significance_levels": result.significance_level
+            "significance_levels": result.significance_level,
+            "success": success
         }
 
 
@@ -86,6 +93,8 @@ def base_stats(samples):
         - median: median value of the array
         - std: standard deviation of the array (with ddof=1)
     """
+
+    samples = np.asarray(samples)
 
     return {
         "n": len(samples),
@@ -199,13 +208,13 @@ def initialize_weight_matrix(graphs: List[nx.DiGraph]):
     return weights
 
 
-def temporal_change_analysis(weight_matrix, edges):
+def temporal_change_analysis(weight_matrix, edges, top_n=5):
     delta_weights = np.diff(weight_matrix, axis=1)  # shape: (num_edges, num_iters-1)
 
     #rel_change = delta_weights / weight_matrix[:, :-1]
 
     max_change_per_edge = np.max(np.abs(delta_weights), axis=1)
-    top_indices = np.argsort(max_change_per_edge)[-5:]  # top 5 most dynamic edges
+    top_indices = np.argsort(max_change_per_edge)[-top_n:]  # top N most dynamic edges
 
     top_edges = [edges[i] for i in top_indices]
 

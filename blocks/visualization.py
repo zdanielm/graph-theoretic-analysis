@@ -93,17 +93,39 @@ def plot_temporal_changes(weights: np.ndarray, edges: list, top_edges: list, ite
     if iterations is None:
         iterations = list(range(weights.shape[1]))
 
-    plt.figure(figsize=(16, 9))
+    fig, ax = plt.subplots(figsize=(16, 9))
 
-    # Get row indices for the top edges
     top_indices = [edges.index(edge) for edge in top_edges]
 
     for idx in top_indices:
-        plt.plot(iterations, weights[idx, :], marker='o', label=f"{edges[idx][0]}->{edges[idx][1]}")
+        ax.plot(
+            iterations,
+            weights[idx, :],
+            marker='o',
+            linewidth=3,
+            markersize=7,
+            label=f"{edges[idx][0]}->{edges[idx][1]}"
+        )
 
-    plt.xlabel("Iteration")
-    plt.ylabel("Weight")
-    plt.title("Top Dynamic Edge Weights Over Time")
-    plt.legend()
-    plt.grid(True)
+    ax.set_xlabel("Iteration", fontsize=18, fontweight=600)
+    ax.set_ylabel("Weight", fontsize=18, fontweight=600)
+    ax.set_title("Top Dynamic Edge Weights Over Time", fontsize=24, fontweight=800)
+
+    for label in ax.get_xticklabels() + ax.get_yticklabels():
+        label.set_fontsize(16)
+        label.set_fontweight(600)
+
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+    ax.legend(
+        loc='center left',
+        bbox_to_anchor=(1.02, 0.5),
+        frameon=True,
+        title="Edge ID",
+        prop={'size': 16, 'weight': 600},
+        title_fontproperties={'size': 16, 'weight': 600}
+    )
+    ax.grid(True)
+    fig.tight_layout(rect=[0, 0, 0.82, 1])
     plt.show()
