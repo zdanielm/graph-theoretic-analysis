@@ -27,6 +27,50 @@ def get_attribute(G, attribute="weight"):
         for _, _, data in G.edges(data=True)
     ])
 
+def stratified_quantile_sample(data, bins=40, sample_per_bin=2, random_state=None):
+    """
+    Returns a stratified sample of the given data, based on the quantiles of the data.
+
+    Parameters
+    ----------
+    data : array_like
+        The data to sample from.
+    bins : int, optional
+        The number of bins, defaults to 40.
+    sample_per_bin : int, optional
+        The number of samples to draw from each bin, defaults to 2.
+    random_state : int, optional
+        The random seed to use, defaults to None.
+
+    Returns
+    -------
+    array_like
+        A stratified sample of the given data.
+
+    Notes
+    -----
+    This function first calculates the quantiles of the data, then draws a sample from each bin, such that the sample size is proportional to the size of each bin. The sample is then concatenated and returned.
+    """
+
+    rng = np.random.default_rng(random_state)
+    data = np.asarray(data)
+
+    quantiles = np.linspace(0, 1, bins + 1)
+    edges = np.quantile(data, quantiles)
+
+    samples = []
+
+    for i in range(bins):
+        mask = (data >= edges[i]) & (data <= edges[i+1])
+        bin_data = data[mask]
+
+        if len(bin_data) == 0:
+            continue
+
+        k = min(sample_per_bin, len(bin_data))
+        samples.append(rng.choice(bin_data, size=k, replace=False))
+
+    return np.concatenate(samples)
 
 def normality_test(graph: nx.DiGraph, attribute: str = "weight"):
     """
@@ -47,9 +91,9 @@ def normality_test(graph: nx.DiGraph, attribute: str = "weight"):
     dict
         A dictionary containing the test name, statistic, p-value, critical values, and significance level.
     """
-
-    samples = get_attribute(graph, attribute)
-    if len(samples) < 5000:
+    all_data = get_attribute(graph, attribute)
+    if len(all_data) < 5000:
+        samples = stratified_quantile_sample(all_data, bins=50, sample_per_bin=6, random_state=42)
         stat, p = shapiro(samples)
         return {
             "test": "shapiro_wilk",
@@ -58,6 +102,7 @@ def normality_test(graph: nx.DiGraph, attribute: str = "weight"):
             "success": bool(p > 0.05)
         }
     else:
+        samples = stratified_quantile_sample(all_data, bins=50, sample_per_bin=6, random_state=42)
         result = anderson(samples, dist="norm")
 
         sig_levels = np.asarray(result.significance_level)

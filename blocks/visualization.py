@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy import stats
 
 
 def plot_distribution(hist_data, value_type):
@@ -128,4 +129,30 @@ def plot_temporal_changes(weights: np.ndarray, edges: list, top_edges: list, ite
     )
     ax.grid(True)
     fig.tight_layout(rect=[0, 0, 0.82, 1])
+    plt.show()
+
+
+def QQ_plot(data, dist="norm", network_name=""):
+    """
+    Creates a Q-Q plot of the given data.
+
+    Parameters
+    ----------
+    data : array_like
+        The data to plot.
+    dist : str, optional
+        The distribution to compare with, defaults to "norm".
+    network_name : str, optional
+        The name of the network to include in the plot title, defaults to "".
+
+    Returns
+    -------
+    None
+    """
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+    stats.probplot(data, dist=dist, plot=ax)
+    ax.set_title(f"Q-Q Plot of Weights ({network_name})")
+    ax.grid(True, alpha=0.3)
+    plt.tight_layout()
     plt.show()
